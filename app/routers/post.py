@@ -23,7 +23,8 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db), curren
     #cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING * """, (post.title, post.content, post.published))
     #new_post = cursor.fetchone()
     #conn.commit()
-    new_post = models.Post(owner_id=current_user.id, **post.dict())
+    print(current_user.email)
+    new_post = models.Post( **post.dict())
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -47,7 +48,7 @@ def delete_post(id: int, db: Session = Depends(get_db), current_user: int = Depe
 #    cursor.execute("""DELETE FROM posts WHERE id = %s returning * """, str(id),)
 #    delete_post = cursor.fetchone()
 #    conn.commit()
-    post_query = db.query(models.Post).filter(models.Post.id==id).first()
+    post_query = db.query(models.Post).filter(models.Post.id == id).first()
     post = post_query.first()
     if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post with id: {id} does not exist")
